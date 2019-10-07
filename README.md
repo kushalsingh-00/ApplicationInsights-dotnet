@@ -11,7 +11,7 @@
 
 # Application Insights for .NET
 
-This repository has code for the base .NET SDK for Application Insights. [Application Insights][AILandingPage] is a service that allows developers ensure their application are available, performing, and succeeding. This SDK provides the base ability to send all Application Insights types from any .NET project. 
+This repository has code for the base .NET SDK for Application Insights. [Application Insights][AILandingPage] is a service that allows developers to ensure their application are available, performing, and succeeding. This SDK provides the base ability to send all Application Insights types from any .NET project. 
 
 ## Getting Started
 
@@ -38,7 +38,7 @@ tc.InstrumentationKey = "INSERT YOUR KEY";
 
 ### Use the TelemetryClient to send telemetry
 
-This "base" library does not provide any automatic telemetry collection or any automatic meta-data properties. You can populate common context on the `TelemetryClient.context` property which will be automatically attached to each telemetry item sent. You can also attach additional property data to each telemetry item sent. The `TelemetryClient` also exposes a number of `Track...()` methods that can be used to send all telemetry types understood by the Application Insights service. Some example use cases are shown below.
+This "base" library does not provide any automatic telemetry collection or any automatic meta-data properties. You can populate a common context on the `TelemetryClient.context` property which will be automatically attached to each telemetry item sent. You can also attach additional property data to each telemetry item sent. The `TelemetryClient` also exposes a number of `Track...()` methods that can be used to send all telemetry types understood by the Application Insights service. Some example use cases are shown below.
 
 ```C#
 tc.Context.User.Id = Environment.GetUserName(); // This is probably a bad idea from a PII perspective.
@@ -72,17 +72,17 @@ This repository builds two packages - `Microsoft.ApplicationInsights` and `Micro
 
 Application Insights SDK defines the following layers: data collection, public API, telemetry initialization and enrichment, data reduction pipeline and finally - telemetry sink. 
 
-**Data collection** layer represented by various telemetry modules - officially supported and community created. Each module converts events exposed by platform like ASP.NET into Application Insights data model. For example, dependency collection telemetry module subscribes on `begin` and `end` events of `System.Net.HttpClient` and calls `TrackDependency` API. This module knows how to collect dependency name, target, and [other properties](https://docs.microsoft.com/azure/application-insights/application-insights-data-model-dependency-telemetry) from those `begin` and `end` events.
+**Data collection** layer represented by various telemetry modules - officially supported and community created. Each module converts events exposed by platform like ASP.NET into Application Insights data model. For example, the dependency collection telemetry module subscribes on `begin` and `end` events of `System.Net.HttpClient` and calls `TrackDependency` API. This module knows how to collect the dependency name, target, and [other properties](https://docs.microsoft.com/azure/application-insights/application-insights-data-model-dependency-telemetry) from those `begin` and `end` events.
 
-**Telemetry initialization and enrichment** allows to modify telemetry items. There are two typical scenarios for the enrichment. First - stamp every telemetry item with the platform or application specific [context](https://docs.microsoft.com/azure/application-insights/application-insights-data-model-context). Examples may be application version, user id or flighting name for A/B testing. Second scenario is re-writing properties of the telemetry data collected automatically. For instance, dependency collection telemetry module collects the http dependency name as a url path and telemetry initializer may change this behavior for well-known urls.
+**Telemetry initialization and enrichment** allows to modify telemetry items. There are two typical scenarios for enrichment. First - stamp every telemetry item with the platform or application specific [context](https://docs.microsoft.com/azure/application-insights/application-insights-data-model-context). Examples may be application version, user id or flighting name for A/B testing. the  Second scenario is re-writing properties of the telemetry data collected automatically. For instance, dependency collection telemetry module collects the http dependency name as a url path and telemetry initializer may change this behavior for well-known urls.
 
 **Data reduction pipeline** is a linked list of telemetry processors. Each telemetry processor may decide to pre-aggregate and filter telemetry item or pass it to the next processor. This way only interesting telemetry reaches to the end of the pipeline and being send to the telemetry sinks.
 
-Each **Telemetry sink** is responsible to upload telemetry to the specific back-end. Default telemetry sink sends data to the Application Insights. Sinks may also differ in guarantees they provide while uploading to the same back end. One may implement reliable delivery with re-tries and persistence when another may implement send and forget type of upload. Every telemetry sink may have it's own pipeline for additional data filtering and pre-aggregation. 
+Each **Telemetry sink** is responsible to upload telemetry to the specific back-end. Default telemetry sink sends data to the Application Insights. Sinks may also differ in guarantees they provide while uploading to the same back end. One may implement reliable delivery with re-tries and persistence when another may implement send and forget type of upload. Every telemetry sink may have its own pipeline for additional data filtering and pre-aggregation. 
 
 Set of telemetry initializers called synchronously for every telemetry item. So extra properties can be added to the item. 
 By this time telemetry item is fully initialized. Build pipeline to aggregate or filter telemetry. 
-Set of telemetry sinks to upload data in various back-ends. Every sink has it's own pipeline for extra filtering and data aggregation.
+Set of telemetry sinks to upload data in various back-ends. Every sink has its own pipeline for extra filtering and data aggregation.
 
 Here is the diagram of Application Insights SDK layering and extensibility points:
 
